@@ -688,10 +688,12 @@ def map_table(c: Canvas, x: float, foot: float, k: float, route: int) -> dict:
     weight on each far corner; red-headed pins in the channels between the reefs and a red string from pin to pin,
     `route` pins far; a parallel ruler and a pair of dividers lie on the chart. Returns its box."""
     d = Canvas()
+    d.shape(rounded_rect_d(-82, -16, 164, 5, 1), P.WOOD, sw=1.1, light=None)   # the low shelf, its ends in the legs
     for lx in (-100, -84, 76, 92):                                                       # the legs
         d.shape(rounded_rect_d(lx, -46, 8, 46, 1.5), P.WOOD_DARK, sw=1.2, light=None)
         d.shape(rounded_rect_d(lx - 1.5, -4, 11, 4, 1), P.WOOD_DARK, sw=1, light=None)    # the feet
-    d.shape(rounded_rect_d(-96, -16, 186, 5, 1), P.WOOD, sw=1.1, light=None)              # the low shelf
+    for lx in (-100, 92):                                                                # rails from leg to leg
+        d.shape(rounded_rect_d(lx + 4, -15, 12 if lx < 0 else -12, 3, 0.8), P.WOOD_DARK, sw=0.8, light=None)
     for rx, tone in ((-60, P.CARD), (-22, mix(P.SAND, P.CARD, 0.4))):                     # rolled charts on it
         d.shape(rounded_rect_d(rx, -24, 34, 8, 4), tone, sw=0.9, light=None)
         d.add(f'<ellipse cx="{rx + 30}" cy="-20" rx="2.6" ry="4" fill="{darken(tone, 0.9)}" stroke="{INK}" '

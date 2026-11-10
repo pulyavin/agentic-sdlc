@@ -1096,8 +1096,8 @@ def preview_station(s: Strip, beat: str) -> None:
         stand(s, "cat", beside(s, box, b, "cat"), "point", "smile", flip=b > 0)
     else:
         stand(s, "agent", beside(s, box, a, "agent"), "point", "smile", flip=a > 0)
-        stand(s, "caterpillar", beside(s, box, b, "caterpillar"), "present", "smile", flip=b > 0,
-              hold=handheld.clipboard)
+        held(s, stand(s, "caterpillar", beside(s, box, b, "caterpillar"), "show", "smile", flip=b > 0),
+              handheld.clipboard, "left")
         sparrow_on(s, x - 40 * tk, t["top"], "tank")
 
 
@@ -1146,8 +1146,8 @@ def monorepo_station(s: Strip, beat: str) -> None:
         stand(s, "caterpillar", beside(s, box, b, "caterpillar"), "think", "worry", flip=b > 0)
     else:
         stand(s, "cat" if mid(s) else "professor", beside(s, box, a, "professor"), "point", "talk", flip=a > 0)
-        stand(s, "caterpillar", beside(s, box, b, "caterpillar"), "present", "worry", flip=b > 0,
-              hold=handheld.clipboard)
+        held(s, stand(s, "caterpillar", beside(s, box, b, "caterpillar"), "show", "worry", flip=b > 0),
+              handheld.clipboard, "left")
 
 
 def testing_station(s: Strip, beat: str) -> None:
@@ -1186,8 +1186,8 @@ def testing_station(s: Strip, beat: str) -> None:
     a, b = (-1, 1) if not getattr(s, "mirror", False) else (1, -1)
     if beat == "case":
         stand(s, "agent", beside(s, box, a, "agent"), "point", "smile", flip=a > 0)
-        stand(s, "caterpillar", beside(s, box, b, "caterpillar"), "present", "worry", flip=b > 0,
-              hold=handheld.clipboard)
+        held(s, stand(s, "caterpillar", beside(s, box, b, "caterpillar"), "show", "worry", flip=b > 0),
+              handheld.clipboard, "left")
     else:
         stand(s, "agent", beside(s, box, b, "agent"), "cheer", "smile", flip=b > 0)
         stand(s, "cat", beside(s, box, a, "cat"), "think", "smile", flip=a > 0)
@@ -1233,8 +1233,8 @@ def check_station(s: Strip, beat: str) -> None:
         stand(s, "cat", beside(s, pbox, b, "cat"), "present", "smile", flip=b > 0, hold=handheld.stopwatch)
         stand(s, "agent", beside(s, pbox, a, "agent"), "cheer", "smile", flip=a > 0)
     else:
-        stand(s, "caterpillar", beside(s, pbox, b, "caterpillar"), "present", "worry", flip=b > 0,
-              hold=handheld.clipboard)
+        held(s, stand(s, "caterpillar", beside(s, pbox, b, "caterpillar"), "show", "worry", flip=b > 0),
+              handheld.clipboard, "left")
         stand(s, "cat", beside(s, pbox, a, "cat"), "present", "smile", flip=a > 0, hold=handheld.stopwatch)
         sparrow_on(s, (pbox[0] + pbox[2]) / 2, pbox[1] + 2, "exit")
 

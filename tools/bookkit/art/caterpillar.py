@@ -29,7 +29,9 @@ REST_R = ((166, 170), (170, 196), "relaxed", 0)
 POSES = {
     "wave": ("stand", REST_L, ((158, 146), (172, 112), "open", 0)),
     "think": ("stand", REST_L, ((168, 176), (130, 140), "fist", -16)),
-    "present": ("stand", REST_L, ((162, 150), (184, 126), "open", -10)),   # arm out clear of her body, up
+    "present": ("stand", REST_L, ((158, 164), (186, 148), "open", -15)),
+    # a thing shown in the hand on her belly side (her back, with its spikes, is on the right): arm out and up
+    "show": ("stand", ((38, 166), (14, 146), "open", 14), REST_R),
     "cheer": ("stand", ((48, 146), (34, 112), "open", 0), ((158, 146), (172, 112), "open", 0)),
     "stand": ("stand", REST_L, REST_R),
     "point": ("stand", REST_L, ((156, 158), (186, 152), "point", 0)),

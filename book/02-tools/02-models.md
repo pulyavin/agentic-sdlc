@@ -1,6 +1,6 @@
 ## Какие модели есть на рынке
 
-Начнём с моделей. Делают их сейчас не только Anthropic и OpenAI — свои модели есть и у Google, и у компаний из Китая и Франции, и почти у каждой из них найдётся модель, заточенная под написание кода.
+Начнём с моделей. Делают их сейчас не только Anthropic и OpenAI — свои модели есть и у Google, и у компаний из Китая, Франции и России, и почти у каждой из них найдётся модель, заточенная под написание кода.
 
 | Компания | Страна | Модели | Контекст |
 |---|---|---|---|
@@ -14,12 +14,18 @@
 | Alibaba | :flag-cn: Китай | - Qwen 3.8 Max | 1M |
 | MiniMax | :flag-cn: Китай | - MiniMax-M3 | 1M |
 | Mistral | :flag-fr: Франция | - Codestral<br>- Mistral Medium 3.5 | - 128K<br>- 256K |
+| Сбер | :flag-ru: Россия | - GigaChat 2 Max | 128K |
+| Яндекс | :flag-ru: Россия | - Alice AI LLM<br>- YandexGPT Pro 5.1 | - 128K<br>- 32K |
 
 ::: note cat
 Есть ещё Claude Mythos 5.1 — те же возможности, что у Fable, но доступна она только организациям, прошедшим проверку Anthropic. Подробнее — [platform.claude.com](https://platform.claude.com/docs/en/about-claude/models/overview)
 :::
 
 **Контекст** тут — это то, сколько текста модель «держит в голове» за один вызов, и меряют его в токенах — кусочках текста, о которых я подробнее расскажу чуть ниже.
+
+::: note cat
+Контекстное окно у GigaChat 2 Max от Сбера — 128K токенов — [developers.sber.ru](https://developers.sber.ru/docs/ru/gigachat/models/gigachat-2-max). У Alice AI LLM от Яндекса — тоже 128K, а у YandexGPT Pro 5.1 — 32K — [aistudio.yandex.ru](https://aistudio.yandex.ru/docs/ru/ai-studio/concepts/generation/models)
+:::
 
 А модели Anthropic, кстати, встроены даже в Xcode, среду разработки от Apple, а начиная с Xcode 27 там же можно выбрать и модели Google и OpenAI.
 

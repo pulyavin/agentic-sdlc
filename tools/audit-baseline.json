@@ -43,14 +43,6 @@
     {
       "check": "word-gap",
       "chapter": "2",
-      "where": "ной видеокарте выдаёт до сотни токенов в секунду,",
-      "page": 33,
-      "detail": "a justified line with wide gaps between its words: mean 0.63 em, widest 0.64 em",
-      "reason": "A justified line that holds few words: a narrow column beside a note, or inline code, a no-break pair or a word the dictionary cannot hyphenate at its end. Hyphenation, the narrower word space and letter spacing at its invisible limit (paginate.js) leave it as wide as shown; only rewording the sentence closes it."
-    },
-    {
-      "check": "word-gap",
-      "chapter": "2",
       "where": "тивно использую Cursor, потому что мне нравится,",
       "page": 41,
       "detail": "a justified line with wide gaps between its words: mean 0.75 em, widest 0.75 em",
@@ -311,14 +303,6 @@
       "page": 252,
       "detail": "a justified line with wide gaps between its words: mean 0.57 em, widest 0.58 em",
       "reason": "A justified line that holds few words: a narrow column beside a note, or inline code, a no-break pair or a word the dictionary cannot hyphenate at its end. Hyphenation, the narrower word space and letter spacing at its invisible limit (paginate.js) leave it as wide as shown; only rewording the sentence closes it."
-    },
-    {
-      "check": "page-weight",
-      "chapter": "Заключение",
-      "where": "",
-      "page": 260,
-      "detail": "the page weighs 605 KB of markup (drawings, mostly)",
-      "reason": "The closing pages (the conclusion's finale and the farewell page with the walled city) are the most detailed drawings of the book; the whole book builds and prints with them."
     }
   ]
 }

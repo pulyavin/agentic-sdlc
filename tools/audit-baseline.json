@@ -123,25 +123,9 @@
     {
       "check": "word-gap",
       "chapter": "6",
-      "where": "найдёт. А если всё-таки запускаешь агента из корня, то настр",
-      "page": 116,
-      "detail": "a justified line with wide gaps between its words: mean 0.61 em, widest 0.61 em",
-      "reason": "A justified line that holds few words: a narrow column beside a note, or inline code, a no-break pair or a word the dictionary cannot hyphenate at its end. Hyphenation, the narrower word space and letter spacing at its invisible limit (paginate.js) leave it as wide as shown; only rewording the sentence closes it."
-    },
-    {
-      "check": "word-gap",
-      "chapter": "6",
       "where": "лизовать их, и сам убедиться, что всё работает, а тебе остан",
       "page": 125,
       "detail": "a justified line with wide gaps between its words: mean 0.64 em, widest 0.65 em",
-      "reason": "A justified line that holds few words: a narrow column beside a note, or inline code, a no-break pair or a word the dictionary cannot hyphenate at its end. Hyphenation, the narrower word space and letter spacing at its invisible limit (paginate.js) leave it as wide as shown; only rewording the sentence closes it."
-    },
-    {
-      "check": "word-gap",
-      "chapter": "6",
-      "where": "Для Android есть официальный Android CLI, который",
-      "page": 126,
-      "detail": "a justified line with wide gaps between its words: mean 0.57 em, widest 0.57 em",
       "reason": "A justified line that holds few words: a narrow column beside a note, or inline code, a no-break pair or a word the dictionary cannot hyphenate at its end. Hyphenation, the narrower word space and letter spacing at its invisible limit (paginate.js) leave it as wide as shown; only rewording the sentence closes it."
     },
     {

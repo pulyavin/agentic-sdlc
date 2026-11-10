@@ -681,46 +681,84 @@ def valve_panel(c: Canvas, x: float, foot: float, k: float, lit: tuple[int, ...]
 
 
 def map_table(c: Canvas, x: float, foot: float, k: float, route: int) -> dict:
-    """The map table standing on the deck at (x, foot), 220 wide and 104 tall: a heavy table on four legs, on its
-    slanting top a raised relief of the coral maze - its walls standing up as blocks, light on top and shaded in
-    front - a small white plaque at each cave; red-headed pins at the caves of the route and a red string from
-    pin to pin, `route` caves far; a brass dividers lying by it. Returns its box."""
+    """The chart table standing on the deck at (x, foot), 220 wide and 104 tall, drawn like a ship's chart table:
+    four turned legs, a low shelf between them with two rolled charts on it, under the top a row of wide flat
+    drawers with brass pulls, and a slanting top with a raised rim. On the top lies the paper chart of the reef:
+    pale water with depth lines, the coral reefs as outlined islands, a compass rose in its near corner, a brass
+    weight on each far corner; red-headed pins in the channels between the reefs and a red string from pin to pin,
+    `route` pins far; a parallel ruler and a pair of dividers lie on the chart. Returns its box."""
     d = Canvas()
-    for lx in (-100, -84, 76, 92):
-        d.shape(rounded_rect_d(lx, -54, 8, 54, 1.5), P.WOOD_DARK, sw=1.2, light=None)
-    d.shape(rounded_rect_d(-106, -60, 212, 10, 1.5), P.WOOD, sw=1.4, light=None)          # the apron
+    for lx in (-100, -84, 76, 92):                                                       # the legs
+        d.shape(rounded_rect_d(lx, -46, 8, 46, 1.5), P.WOOD_DARK, sw=1.2, light=None)
+        d.shape(rounded_rect_d(lx - 1.5, -4, 11, 4, 1), P.WOOD_DARK, sw=1, light=None)    # the feet
+    d.shape(rounded_rect_d(-96, -16, 186, 5, 1), P.WOOD, sw=1.1, light=None)              # the low shelf
+    for rx, tone in ((-60, P.CARD), (-22, mix(P.SAND, P.CARD, 0.4))):                     # rolled charts on it
+        d.shape(rounded_rect_d(rx, -24, 34, 8, 4), tone, sw=0.9, light=None)
+        d.add(f'<ellipse cx="{rx + 30}" cy="-20" rx="2.6" ry="4" fill="{darken(tone, 0.9)}" stroke="{INK}" '
+              f'stroke-width=".7"/><ellipse cx="{rx + 30}" cy="-20" rx="1" ry="1.6" fill="none" stroke="{INK}" '
+              f'stroke-width=".4"/>')
+        d.line(f"M{rx + 14},-24 V-16", 0.8, P.RED)                                         # its ribbon
+    d.shape(rounded_rect_d(-106, -60, 212, 15, 1.5), P.WOOD, sw=1.4, light=None)          # the drawers' case
+    for dx in (-102, -1):                                                                  # two wide flat drawers
+        d.shape(rounded_rect_d(dx, -57.5, 99, 10, 1), lighten(P.WOOD, 0.12), sw=0.9, light=None)
+        d.shape(rounded_rect_d(dx + 41, -54, 17, 3, 1.4), BRASS, sw=0.7, light=None)
     d.shape("M-110,-60 L-90,-100 H90 L110,-60 Z", P.WOOD_LIGHT, sw=1.6, light=None)       # the top, at a slant
-    d.shape("M-98,-63 L-82,-96 H82 L98,-63 Z", mix(P.SAND, VIOLET, 0.25), sw=1.2, light=None)   # the relief's bed
+    d.shape("M-104,-62.5 L-87,-97 H87 L104,-62.5 Z", darken(P.WOOD_LIGHT, 0.9), sw=0.8, light=None)  # its rim
 
     def at(u: float, v: float) -> tuple[float, float]:                # (0..1 across, 0..1 from front to back)
-        half = 98 - 16 * v
-        return -half + 2 * half * u, -63 - 33 * v
+        half = 96 - 15 * v
+        return -half + 2 * half * u, -64 - 31 * v
 
-    rnd = random.Random(5)
-    for row in range(4, -1, -1):                                          # the walls, back rows first
-        v = 0.12 + row * 0.19
-        gaps = sorted(rnd.sample(range(1, 9), 3))
-        for a, b in zip([0, *gaps], [*gaps, 9], strict=True):
-            (x0, y0), (x1, _) = at(a / 9 + 0.03, v), at(b / 9 - 0.06, v)
-            hgt = 4.0 - row * 0.4
-            d.add(f'<rect x="{n(x0)}" y="{n(y0 - hgt)}" width="{n(x1 - x0)}" height="{n(hgt)}" '
-                  f'fill="{mix(P.PINK, VIOLET, 0.45)}" stroke="{INK}" stroke-width=".6"/>'
-                  f'<rect x="{n(x0)}" y="{n(y0 - hgt - 2)}" width="{n(x1 - x0)}" height="2" '
-                  f'fill="{lighten(mix(P.PINK, VIOLET, 0.3), 0.3)}" stroke="{INK}" stroke-width=".5"/>')
-    caves = [at(u, v) for u, v in ((0.12, 0.03), (0.3, 0.22), (0.52, 0.41), (0.36, 0.6), (0.62, 0.79), (0.86, 0.97))]
-    for cx_, cy_ in caves:                                                # a plaque at each cave
-        d.add(f'<rect x="{n(cx_ - 4.5)}" y="{n(cy_ + 0.5)}" width="9" height="3.6" rx=".6" fill="{P.WHITE}" '
-              f'stroke="{INK}" stroke-width=".5"/>')
-    on = caves[:max(2, route)]
-    d.add(f'<polyline points="{" ".join(f"{n(cx_)},{n(cy_ - 4)}" for cx_, cy_ in on)}" fill="none" '
-          f'stroke="{P.RED}" stroke-width="1.1"/>')                           # the string from pin to pin
-    for cx_, cy_ in on:
-        d.line(f"M{n(cx_)},{n(cy_)} V{n(cy_ - 4)}", 0.8, P.METAL_DARK)
-        d.add(f'<circle cx="{n(cx_)}" cy="{n(cy_ - 4.6)}" r="1.9" fill="{P.RED}" stroke="{INK}" stroke-width=".5"/>')
-    d.line("M70,-66 L84,-76 M70,-66 L78,-80", 1.4, BRASS)                                   # the dividers
+    def poly(pts) -> str:
+        return " ".join(f"{n(px)},{n(py)}" for px, py in pts)
+
+    sea = mix(P.BLUE, P.CARD, 0.72)
+    paper = [at(0.03, 0.04), at(0.97, 0.04), at(0.97, 0.96), at(0.03, 0.96)]
+    d.add(f'<polygon points="{poly(paper)}" fill="{sea}" stroke="{INK}" stroke-width=".9"/>')      # the chart
+    margin = [at(0.06, 0.1), at(0.94, 0.1), at(0.94, 0.9), at(0.06, 0.9)]
+    d.add(f'<polygon points="{poly(margin)}" fill="none" stroke="{darken(sea, 0.7)}" stroke-width=".4"/>')
+    rnd = random.Random(7)
+    reefs = ((0.24, 0.7, 0.1, 0.15), (0.45, 0.33, 0.09, 0.12), (0.66, 0.68, 0.1, 0.14),
+             (0.86, 0.3, 0.06, 0.13), (0.24, 0.24, 0.06, 0.11), (0.44, 0.8, 0.06, 0.08))
+    for u0, v0, ru, rv in reefs:
+        shape = [(0.75 + 0.35 * rnd.random(), i / 9 * math.tau) for i in range(9)]
+        line = [at(u0 + ru * 1.55 * f * math.cos(a), v0 + rv * 1.55 * f * math.sin(a)) for f, a in shape]
+        d.add(f'<polygon points="{poly(line)}" fill="none" stroke="{darken(sea, 0.72)}" stroke-width=".45" '
+              f'stroke-dasharray="1.6 1.2" stroke-linejoin="round"/>')                     # its depth line
+        land = [at(u0 + ru * f * math.cos(a), v0 + rv * f * math.sin(a)) for f, a in shape]
+        d.add(f'<polygon points="{poly(land)}" fill="{mix(P.SAND, P.CARD, 0.3)}" stroke="{INK}" '
+              f'stroke-width=".7" stroke-linejoin="round"/>')                               # the reef
+    rx_, ry_ = at(0.13, 0.2)                                                               # the compass rose
+    d.add(f'<circle cx="{n(rx_)}" cy="{n(ry_)}" r="5.2" fill="{P.CARD}" stroke="{INK}" stroke-width=".6"/>'
+          f'<path d="M{n(rx_)},{n(ry_ - 4.6)} L{n(rx_ + 1.2)},{n(ry_)} L{n(rx_)},{n(ry_ + 4.6)} '
+          f'L{n(rx_ - 1.2)},{n(ry_)} Z M{n(rx_ - 4.6)},{n(ry_)} L{n(rx_)},{n(ry_ - 1.2)} L{n(rx_ + 4.6)},{n(ry_)} '
+          f'L{n(rx_)},{n(ry_ + 1.2)} Z" fill="{INK}"/>'
+          f'<path d="M{n(rx_)},{n(ry_ - 4.6)} L{n(rx_ + 1.2)},{n(ry_)} L{n(rx_ - 1.2)},{n(ry_)} Z" fill="{P.RED}"/>')
+    for wu in (0.04, 0.96):                                                                # brass chart weights
+        wx, wy = at(wu, 0.95)
+        d.add(f'<rect x="{n(wx - 3.2)}" y="{n(wy - 4)}" width="6.4" height="4.4" rx="1" fill="{BRASS}" '
+              f'stroke="{INK}" stroke-width=".6"/><ellipse cx="{n(wx)}" cy="{n(wy - 4)}" rx="3.2" ry="1.1" '
+              f'fill="{lighten(BRASS, 0.3)}" stroke="{INK}" stroke-width=".5"/>')
+    path = [at(u, v) for u, v in ((0.08, 0.46), (0.31, 0.47), (0.56, 0.5), (0.77, 0.47), (0.79, 0.86),
+                                   (0.58, 0.93))]
+    on = path[:max(2, route)]
+    d.add(f'<polyline points="{" ".join(f"{n(px)},{n(py - 4)}" for px, py in on)}" fill="none" '
+          f'stroke="{P.RED}" stroke-width="1.1" stroke-linejoin="round"/>')                 # the string
+    for px, py in on:
+        d.line(f"M{n(px)},{n(py)} V{n(py - 4)}", 0.8, P.METAL_DARK)
+        d.add(f'<circle cx="{n(px)}" cy="{n(py - 4.6)}" r="1.9" fill="{P.RED}" stroke="{INK}" stroke-width=".5"/>')
+    (r0, r1), (r2, _) = at(0.5, 0.07), at(0.74, 0.07)                                       # the parallel ruler
+    d.add(f'<rect x="{n(r0)}" y="{n(r1 - 2.6)}" width="{n(r2 - r0)}" height="2.6" fill="{INK}" fill-opacity=".85"/>'
+          f'<rect x="{n(r0)}" y="{n(r1 - 6.6)}" width="{n(r2 - r0)}" height="2.6" fill="{INK}" fill-opacity=".85"/>'
+          f'<path d="M{n(r0 + 8)},{n(r1 - 1.3)} L{n(r0 + 11)},{n(r1 - 5.3)} M{n(r2 - 11)},{n(r1 - 1.3)} '
+          f'L{n(r2 - 8)},{n(r1 - 5.3)}" stroke="{BRASS}" stroke-width="1"/>')
+    hx, hy = at(0.86, 0.07)                                                     # the dividers, lying open
+    d.line(f"M{n(hx)},{n(hy - 3)} L{n(hx - 8)},{n(hy)} M{n(hx)},{n(hy - 3)} L{n(hx + 7)},{n(hy - 1)}", 1.2, BRASS)
+    d.add(f'<circle cx="{n(hx)}" cy="{n(hy - 3)}" r="1.3" fill="{BRASS}" stroke="{INK}" stroke-width=".5"/>')
     c.add(_at(d, x, foot, k))
+    last = on[-1]
     return {"box": (x - 110 * k, foot - 104 * k, x + 110 * k, foot), "top": foot - 100 * k,
-            "route": (x + on[-1][0] * k, foot + on[-1][1] * k)}
+            "route": (x + last[0] * k, foot + last[1] * k)}
 
 
 def screen_view(cc: Canvas, x0: float, y0: float, x1: float, y1: float, gates: int, passed: int) -> None:
@@ -1228,38 +1266,38 @@ BAYS = ("build", "preview", "services", "monorepo", "testing", "video", "check",
 
 
 def finale(s: Strip) -> None:
-    """The whole base at once, in cross-section: under the hull's arch two decks of rooms - in a low frame one -
-    each with its station's thing: the submarine in the dock, the preview tank, the switch panel under the coral
-    town's porthole, the map table, the control desk, the replay monitor under the camera's porthole, the
-    labyrinth's exit through a porthole, the pressure chamber; each room's name on a brass plate over it, the cast
-    in the rooms they work in."""
+    """The base in cross-section: in a low frame one deck of all eight rooms, in a tall one (the chapter's last
+    page) a single deck of the last four rooms with open water over it - two decks were too crowded (the author,
+    2026-11-10). Each room has its station's thing: the submarine in the dock, the preview tank, the switch panel,
+    the chart table, the control desk, the replay monitor, the labyrinth's exit through a porthole, the pressure
+    chamber; each room's name on a brass plate over it, the cast in the rooms they work in."""
     ledger(s)
     zoom(s)
     r = lane(s)
     maze_view(s.back, -6, -6, W + 6, r.feet + 4, max(0.8, s.unit), seed=21, school=7)   # the sea round the base
     deck(s.back, -6, W + 6, r.feet, s.h + 4, max(0.8, s.unit))
     left, right = s.lo + 14, s.hi - 14
-    decks = 2 if s.h >= 400 else 1
-    per = len(BAYS) // decks
+    tall_ = s.h >= 400                     # a tall frame: one deck of the last four rooms under open water
+    bays = BAYS[4:] if tall_ else BAYS
+    per = len(bays)
     wide = (right - left) / per
     named = s.h >= 300
     size = 11.0
     th = tag_size("Ag", size)[1]
-    widest = max(tag_size(s.word(key), size)[0] for key in BAYS)
+    widest = max(tag_size(s.word(key), size)[0] for key in bays)
     if widest > wide - 24:
         size = max(sets.LETTERING_MIN + 1, size * (wide - 24) / widest)
         th = tag_size("Ag", size)[1]
-        widest = max(tag_size(s.word(key), size)[0] for key in BAYS)
+        widest = max(tag_size(s.word(key), size)[0] for key in bays)
     rows = 2 if named and widest > wide - 24 else 1                    # plates too wide for a room: two rows
     head = 10 + ((th + 6) * rows + 4 if named else 0)                  # each room's ceiling and its plates
-    floors = [r.feet] if decks == 1 else [r.feet - (r.feet - 6) / 2 - 4, r.feet]
+    floors = [r.feet]
     c = Canvas()
     things = Canvas()
     tops = []
-    perch = (0.0, 0.0)
     pen = Pen(s, 0, 0, 1)
     for d_, floor in enumerate(floors):
-        ceil = (floors[d_ - 1] + 8 if d_ else 14.0)
+        ceil = r.feet - (r.feet - 6) / 2 + 4 if tall_ else 14.0
         c.add(f'<rect x="{n(left - 4)}" y="{n(ceil - 4)}" width="{n(right - left + 8)}" height="{n(floor - ceil + 8)}" '
               f'fill="{WALL}" stroke="{STRAKE}" stroke-width="6"/>')
         pk = max(0.8, s.unit)                                          # the rooms' hull plates and rivets
@@ -1276,7 +1314,7 @@ def finale(s: Strip) -> None:
                       f'fill="{darken(WALL, 0.7)}"/>')
         c.add(f'<rect x="{n(left)}" y="{n(floor - (floor - ceil) * 0.2)}" width="{n(right - left)}" '
               f'height="{n((floor - ceil) * 0.2)}" fill="{STRAKE}" fill-opacity=".85"/>')   # each deck's dado
-        if d_:                                                         # the deck between them
+        if tall_:                                                      # the deckhead over the rooms
             c.add(f'<rect x="{n(left - 4)}" y="{n(ceil - 8)}" width="{n(right - left + 8)}" height="10" '
                   f'fill="{mix(P.METAL, VIOLET, 0.3)}" stroke="{INK}" stroke-width="1.2"/>')
         room = floor - ceil - head - 6
@@ -1293,14 +1331,13 @@ def finale(s: Strip) -> None:
             c.add(f'<rect x="{n(bx - 3)}" y="{n(ceil)}" width="6" height="{n(floor - ceil)}" fill="{STRAKE}" '
                   f'stroke="{INK}" stroke-width="1"/>')
         for i in range(per):
-            key = BAYS[d_ * per + i]
-            x = left + wide * (i + 0.42)
-            fit = wide * 0.78
+            key = bays[i]
+            x = left + wide * (i + (0.36 if tall_ else 0.42))     # in a tall frame the thing leaves room for its keeper
+            fit = wide * (0.62 if tall_ else 0.78)
             if key == "build":
                 k = min(fit / 300, room / 136)
                 sub = submarine(things, x, floor, k, open_=False, running=True)
                 tops.append(sub["box"][1])
-                perch = sub["tower"]
             elif key == "preview":
                 k = min(fit / 150, room / 128)
                 tops.append(tank(things, x, floor, k, True)["box"][1])
@@ -1330,19 +1367,17 @@ def finale(s: Strip) -> None:
                 s.put(2, "", holder.outer, f"label{key}")
     s.put(0.9, c.render(), None)
     s.put(1.2, things.render(), None)
-    cast_ = {1: ("professor", "point"), 3: ("caterpillar", "think"), 4: ("agent", "wave"), 6: ("cat", "present")}
-    for i, (name, pose) in cast_.items():
-        d_, j = divmod(i, per)
-        floor = floors[min(d_, len(floors) - 1)]
-        ceil = floors[d_ - 1] + 8 if d_ and decks == 2 else 14.0
+    cast_ = ({0: ("agent", "wave"), 1: ("professor", "point"), 2: ("cat", "present"), 3: ("caterpillar", "think")}
+             if tall_ else
+             {1: ("professor", "point"), 3: ("caterpillar", "think"), 4: ("agent", "wave"), 6: ("cat", "present")})
+    for j, (name, pose) in cast_.items():
+        floor = floors[0]
+        ceil = r.feet - (r.feet - 6) / 2 + 4 if tall_ else 14.0
         x = left + wide * (j + 0.84)
         tall = min(s.tall * SIZE[name] * 1.4, _fit_tall(name, wide * 0.34, floor - ceil - head - 8))
-        who = s.actor(name, min(x, s.hi - 30), floor, pose, "smile", flip=True, tall=tall, group=f"f{i}")
+        who = s.actor(name, min(x, s.hi - 30), floor, pose, "smile", flip=True, tall=tall, group=f"f{j}")
         if name == "cat":
             held(s, who, handheld.stopwatch)
-    if decks == 2:                                                     # the sparrow on the submarine's tower
-        tx, ty = perch
-        s.actor("sparrow", tx, ty - 3, "stand", "smile", flip=True, tall=wide * 0.45, group="f0")
     if named:
         s.put(2, pen.svg(), None)
 

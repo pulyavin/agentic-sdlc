@@ -2,7 +2,9 @@
 # every page (`book audit`, tools/bookkit/audit.py) - run by tools/container.sh inside the image of tools/Dockerfile, the
 # same command and the same image as on an author's machine. It fails on any error and on any warning
 # tools/audit-baseline.json does not accept; the report, the contact sheets of the flagged pages and the PDF are
-# uploaded as artifacts.
+# uploaded as artifacts. On a pull request from a fork `audit` fails only on errors (the contributor's check) and
+# `layout` (tools/layout_gate.py, the maintainer's check) fails on the layout warnings left: both are required for the
+# merge, so main never turns red after one.
 name: check
 
 on:
@@ -50,3 +52,20 @@ jobs:
             dist/ci/sheets/
             dist/ci/agentic-sdlc.pdf
           if-no-files-found: ignore
+
+  layout:
+    name: layout (maintainer)
+    needs: audit
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          sparse-checkout: tools/layout_gate.py
+          sparse-checkout-cone-mode: false
+      - uses: actions/download-artifact@v7.0.0
+        with:
+          name: agentic-sdlc-audit
+          path: dist/ci
+      - name: No layout warning left for main
+        run: python3 tools/layout_gate.py dist/ci/audit.json

@@ -6,7 +6,7 @@
 # CI runs this inside the image of tools/Dockerfile; tools/container.sh runs it there on any machine. Run from tools/.
 # BASE (a git ref, e.g. origin/main) makes the audit check that book/ changed only together with its version.
 # ADVISORY=1 (a contributor's pull request from a fork) reports the layout warnings without failing on them: the
-# maintainer lays the pages out after the merge, a contributor only writes the text.
+# maintainer lays the pages out in the pull request's branch, guarded by the `layout` job and tools/layout_gate.py.
 set -euo pipefail
 cd "$(dirname "$0")"
 out=../dist/ci

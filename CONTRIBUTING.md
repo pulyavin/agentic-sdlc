@@ -17,9 +17,9 @@ touch `tools/` or the drawings to get a change in.
    ```
    Your machine may break a few lines differently from CI; `tools/container.sh` (Docker) runs exactly what CI runs.
 5. Open a pull request. CI builds the book, checks every page and attaches the PDF, the report and contact sheets of
-   the flagged pages. On a pull request from a fork it fails only on errors (the version, broken markup, a broken
-   build); layout warnings - a hole above a footer, a gap between words - are listed in the report and fixed by the
-   maintainer after the merge.
+   the flagged pages. On a pull request from a fork there are two checks: `audit` is yours and fails only on errors
+   (the version, broken markup, a broken build); `layout (maintainer)` fails on layout warnings - a hole above a
+   footer, a gap between words - and those are the maintainer's: they are fixed in your branch before the merge.
 
 Please:
 

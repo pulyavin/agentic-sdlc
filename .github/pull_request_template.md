@@ -7,4 +7,4 @@
 - [ ] If `book/` changed, the version in `book/book.yml` is raised (`MAJOR.MINOR-MM.YYYY`: MINOR + 1, the current month and year)
 - [ ] Facts about models and tools link to official documentation
 - [ ] Every prompt or command I added has been run
-- [ ] CI is green (layout warnings in its report are fine: the maintainer fixes the pages after the merge)
+- [ ] The `audit` check is green (a red `layout (maintainer)` is fine: the maintainer fixes the pages before the merge)

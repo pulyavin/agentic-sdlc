@@ -280,7 +280,7 @@ def audit(args) -> int:
     for sheet in result["sheets"]:
         print(f"  {sheet['path']}")
     if args.advisory and not auditing.failed(result["findings"], warnings=False):
-        return 0                          # the layout warnings are the maintainer's to fix after the merge
+        return 0                          # the layout warnings are the maintainer's (tools/layout_gate.py)
     return 1 if auditing.failed(result["findings"]) and not args.write_baseline else 0
 
 

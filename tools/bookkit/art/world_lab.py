@@ -839,84 +839,83 @@ BAYS = ("cover", "testfirst", "migrations", "production", "linters", "hooks", "c
 def finale(s: Strip) -> None:
     """The whole lab at once: one long room along its tiled wall, each station in its bay - the racks, the
     indicator, the still, the stress chamber, the microscope, the analyzer with its hatch, the analyzer catching
-    the broken sample - each bay's name on a plate over it; the cast at work in front."""
+    the broken sample - each bay's name on a plate over it; the cast at work in front. In a low frame one row of
+    all the bays; in a tall one (the chapter's last page) one row of the last four under the bare wall - two
+    rows were too crowded (the author, 2026-11-11: an overloaded two-tier picture, redo it)."""
     ledger(s)
     zoom(s)
     backdrop(s, 3)
     r = lane(s)
     left, right = s.lo, s.hi
-    rows = 2 if s.h >= 400 else 1
-    per = math.ceil(len(BAYS) / rows)
+    tall_ = s.h >= 400                     # a tall frame: one row of the last four bays under the bare wall
+    bays = BAYS[4:] if tall_ else BAYS
+    per = len(bays)
     wide = (right - left) / per
     named = s.h >= 300
     size = 11.0
-    widest = max(tag_size(s.word(key), size)[0] for key in BAYS if key != "safety")
+    widest = max(tag_size(s.word(key), size)[0] for key in bays if key != "safety")
     if widest > wide - 20:
         size = max(sets.LETTERING_MIN + 1, size * (wide - 20) / widest)
     th = tag_size("Ag", size)[1]
-    stagger = rows == 1 and widest > wide - 20                         # names too wide for one row: two rows
+    stagger = widest > wide - 20                                       # names too wide for one row: two rows
     head = 8 + ((th + 6) * (2 if stagger else 1) + 4 if named else 0)
-    floors = [r.feet] if rows == 1 else [r.feet - (r.feet - 6) / 2 - 4, r.feet]
+    top_ = 6.0                                                         # the bays' ceiling
     things = Canvas()
-    shelf = Canvas()
     pen = Pen(s, 0, 0, 1)
     tops = []
-    for d_, floor in enumerate(floors):
-        ceil = floors[d_ - 1] + 8 if d_ else 6.0
-        if d_:                                                         # the gallery between the two rows
-            shelf.add(f'<rect x="{n(left - 4)}" y="{n(ceil - 10)}" width="{n(right - left + 8)}" height="12" '
-                      f'fill="{CAB}" stroke="{INK}" stroke-width="1.4"/>')
-        room = floor - ceil - head - 4
-        for i in range(per):
-            idx = d_ * per + i
-            if idx >= len(BAYS):
-                break
-            key = BAYS[idx]
-            x = left + wide * (i + 0.5)
-            fit = wide * 0.86
-            if key == "cover":
-                k = min(fit / 248, room / 100)
-                b = lab_bench(things, x, floor, k, 240)
-                for q in range(3):
-                    rack(things, x - 76 * k + q * 76 * k, b["top"], k * 0.95, 8 - q, seed=q)
-                tops.append(b["top"] - 36 * k)
-            elif key == "testfirst":
-                k = min(fit / 170, room / 172)
-                tops.append(indicator(things, x, floor, k, P.GREEN, 4, False)["box"][1])
-            elif key == "migrations":
-                k = min(fit / 240, room / 160)
-                tops.append(still(things, x, floor, k, True, False)["box"][1])
-            elif key == "production":
-                k = min(fit / 132, room / 183)
-                tops.append(stress_chamber(things, x, floor, k, True)["box"][1])
-            elif key == "linters":
-                k = min(fit / 170, room / 124)
-                b = lab_bench(things, x, floor, k, 170)
-                microscope(things, x - 34 * k, b["top"], k * 1.5)
-                rack(things, x + 44 * k, b["top"], k, 4, slots=5, seed=7)
-                tops.append(b["top"] - 70 * k)
-            elif key == "safety":
-                k = min(fit / 94, room / 168)
-                tops.append(safety_post(things, x, floor, k)["box"][1])
-            else:
-                k = min(fit / 180, room / 168)
-                b = lab_bench(things, x, floor, k, 180)
-                an = analyzer(things, x, b["top"], k * 1.2, "green" if key == "hooks" else "red", 24,
-                              "green" if key == "hooks" else "orange")
-                tops.append(an["box"][1])
-            if named and key != "safety":
-                ty = ceil + 4 + th / 2 + 4 + ((th + 6) * (i % 2) if stagger else 0)
-                holder = pen.tag(f"label{key}", x, ty, s.word(key), size, YELLOW, INK)
-                s.put(2, "", holder.outer, f"label{key}")
-    s.put(0.9, shelf.render(), None)
+    floor, ceil = r.feet, top_
+    room = floor - ceil - head - 4
+    for i in range(per):
+        key = bays[i]
+        x = left + wide * (i + 0.5)
+        fit = wide * 0.86
+        if key == "cover":
+            k = min(fit / 248, room / 100)
+            b = lab_bench(things, x, floor, k, 240)
+            for q in range(3):
+                rack(things, x - 76 * k + q * 76 * k, b["top"], k * 0.95, 8 - q, seed=q)
+            tops.append(b["top"] - 36 * k)
+        elif key == "testfirst":
+            k = min(fit / 170, room / 172)
+            tops.append(indicator(things, x, floor, k, P.GREEN, 4, False)["box"][1])
+        elif key == "migrations":
+            k = min(fit / 240, room / 160)
+            tops.append(still(things, x, floor, k, True, False)["box"][1])
+        elif key == "production":
+            k = min(fit / 132, room / 183)
+            tops.append(stress_chamber(things, x, floor, k, True)["box"][1])
+        elif key == "linters":
+            k = min(fit / 170, room / 124)
+            b = lab_bench(things, x, floor, k, 170)
+            microscope(things, x - 34 * k, b["top"], k * 1.5)
+            rack(things, x + 44 * k, b["top"], k, 4, slots=5, seed=7)
+            tops.append(b["top"] - (100 if tall_ else 70) * k)
+        elif key == "safety":
+            k = min(fit / 94, room / 168)
+            if tall_:                                  # a step left: the professor stands clear of its shower head
+                x = left + wide * (i + 0.3)
+            tops.append(safety_post(things, x, floor, k)["box"][1])
+        else:
+            k = min(fit / 180, room / 168)
+            b = lab_bench(things, x, floor, k, 180)
+            an = analyzer(things, x, b["top"], k * 1.2, "green" if key == "hooks" else "red", 24,
+                          "green" if key == "hooks" else "orange")
+            tops.append(an["box"][1])
+        if named and key != "safety":
+            ty = ceil + 4 + th / 2 + 4 + ((th + 6) * (i % 2) if stagger else 0)
+            if tall_:                                  # under the bare wall the name sits just over its station
+                ty = tops[-1] - 10 - th / 2 - ((th + 6) * (1 - i % 2) if stagger else 0)
+            holder = pen.tag(f"label{key}", x, ty, s.word(key), size, YELLOW, INK)
+            s.put(2, "", holder.outer, f"label{key}")
     s.put(1.2, things.render(), None)
-    cast_ = {0: ("caterpillar", "present"), 2: ("cat", "present"), 4: ("agent", "point"), 5: ("professor", "think")}
+    cast_ = ({0: ("caterpillar", "present"), 1: ("agent", "point"), 2: ("cat", "present"), 3: ("professor", "think")}
+             if tall_ else
+             {0: ("caterpillar", "present"), 2: ("cat", "present"), 4: ("agent", "point"), 5: ("professor", "think")})
     for i, (name, pose) in cast_.items():
-        d_, j = divmod(i, per)
-        floor = floors[min(d_, len(floors) - 1)]
-        ceil = floors[d_ - 1] + 8 if d_ and rows == 2 else 6.0
-        x = left + wide * (j + 0.88)
-        tall = min(s.tall * SIZE[name] * 1.4, _fit_tall(name, wide * 0.32, floor - ceil - head - 6))
+        ceil = top_
+        x = left + wide * (i + (0.82 if tall_ else 0.88))
+        room_ = wide * (0.44 if tall_ else 0.32)                       # under the bare wall the cast stands taller
+        tall = min(s.tall * SIZE[name] * 1.4, _fit_tall(name, room_, floor - ceil - head - 6))
         who = s.actor(name, min(x, s.hi - 30), floor, pose, "smile", flip=True, tall=tall, group=f"f{i}")
         if name == "cat":
             held(s, who, handheld.stopwatch)

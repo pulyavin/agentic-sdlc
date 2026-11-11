@@ -1620,22 +1620,25 @@ def on_track(s: Strip, svg: str, box: tuple, name: str, depth: float | None = No
 
 
 def grip_at(s: Strip, name: str, x: float, pose: str, face: int, feet: float | None = None,
-            side: str = "right") -> tuple[float, float, float]:
-    """Where a character standing at x would close its fist - worked out on a stage of its own."""
+            side: str = "right", holding: bool = False) -> tuple[float, float, float]:
+    """Where a character standing at x would close its fist - worked out on a stage of its own; `holding`: with
+    a thing in that hand, which may change the pose and the hand it is shown in (`characters.shown`)."""
     probe = Stage()
     feet = s.line.feet if feet is None else feet
-    who = probe.actor(name, x, feet, pose, "smile", flip=face < 0, tall=tall_of(s, name))
-    return probe.grip(who, side, pose)
+    hold = {"hold": {side: (lambda *_: "", 0.0)}} if holding else {}
+    who = probe.actor(name, x, feet, pose, "smile", flip=face < 0, tall=tall_of(s, name), **hold)
+    return probe.grip(who, side) if holding else probe.grip(who, side, pose)
 
 
 def reach_x(s: Strip, name: str, pose: str, face: int, target: tuple[float, float], length: float,
-            feet: float | None = None, side: str = "right") -> float:
-    """The x to stand a character at so that its fist is `length` from `target`, on the side it faces away from:
-    a lever, a beam end or a hammer reaching that far."""
-    gx, gy, _ = grip_at(s, name, 0.0, pose, face, feet, side)
+            feet: float | None = None, side: str = "right", holding: bool = False) -> float:
+    """The x to stand a character at so that its fist is `length` from `target`, on the side its fist is out
+    to: a lever, a beam end or a hammer reaching that far."""
+    gx, gy, _ = grip_at(s, name, 0.0, pose, face, feet, side, holding)
     dy = target[1] - gy
     dx = math.sqrt(max(0.0, length * length - dy * dy))
-    return target[0] - face * dx - gx
+    out = (gx > 0) - (gx < 0) or face                  # the fist is out on its facing side, or (shown) the other
+    return target[0] - out * dx - gx
 
 
 def reach_or_aim(s: Strip, name: str, pose: str, face: int, target: tuple[float, float], length: float) -> float:
@@ -1679,6 +1682,7 @@ def away_from(s: Strip, who, target: tuple[float, float]) -> float:
 def hold_reaching(s: Strip, who, make, tip: tuple[float, float], target: tuple[float, float]) -> None:
     """Hand a long thing to a character, turned about the fist so that its `tip` (in the grip frame) points at
     `target` (the turn is applied in the grip frame, before the hand's own mirroring - `in_hand`)."""
+    s.hold(who, make)                                   # first, so the grip is the hand it ends up in
     gx, gy, _ = s.grip(who, "right")
     want = math.atan2(target[1] - gy, target[0] - gx)
     best, turn = None, 0
@@ -1869,7 +1873,7 @@ def roles_station(s: Strip, beat: str) -> None:
         s.put(g.feet - 2, c.render(), ml["box"], "model", group="model")
         half = (_box(s, "caterpillar", 0, g.feet)[2] - _box(s, "caterpillar", 0, g.feet)[0]) / 2
         cx = tx + w * (134 * k + half + 6)
-        who = stand(s, "caterpillar", cx, "present", "smile", face=-w)
+        who = stand(s, "caterpillar", cx, "present", "smile", face=w)   # her belly side, and the hand, to the layout
         s.hold(who, controller)
         a = in_hand(s, who, *CONTROLLER_PORT)
         b_ = in_hand(s, who, CONTROLLER_PORT[0], CONTROLLER_PORT[1] + 1)
@@ -2372,9 +2376,9 @@ def plan_more(s: Strip, beat: str) -> None:
     probe = timetable(st, bx, foot, k, 4, True, False, posts)
     if beat == "tick":
         target = probe["tick"]
-        x = reach_x(s, "caterpillar", "present", -w, target, hand_len(s, "caterpillar", (0.0, 11.4)))
+        x = reach_x(s, "caterpillar", "present", w, target, hand_len(s, "caterpillar", (0.0, 11.4)), holding=True)
         timetable(s, bx, foot, k, 4, True, False, posts)
-        who = stand(s, "caterpillar", x, "present", "smile", face=-w, group="timetable")
+        who = stand(s, "caterpillar", x, "present", "smile", face=w, group="timetable")   # her belly to the board
         hold_reaching(s, who, handheld.pencil, (0.0, 11.4), target)
         place_free(s, "professor", 0.1, "think", "smile", face=w)
         return
@@ -2699,8 +2703,8 @@ def finale(s: Strip) -> None:
     ml = model_layout(cc, a + 134 * mk, feet - 2, mk, seed=4, way=1)
     s.put(feet - 2, cc.render(), ml["box"], "model", group="model")
     tops["roles"] = ((ml["box"][0] + ml["box"][2]) / 2, ml["box"][1])
-    cat_ = stand(s, "caterpillar", ml["box"][2] + wd["caterpillar"] / 2 + 2, "present", "smile", face=-1,
-                 group="model")
+    cat_ = stand(s, "caterpillar", ml["box"][2] + wd["caterpillar"] / 2 + 2, "present", "smile", face=1,
+                 group="model")                         # her belly side, and the controller's hand, to the layout
     s.hold(cat_, controller)
     pa_, pb_ = in_hand(s, cat_, *CONTROLLER_PORT), in_hand(s, cat_, CONTROLLER_PORT[0], CONTROLLER_PORT[1] + 1)
     pa = port(s, pa_[0], pa_[1], pb_[0] - pa_[0], pb_[1] - pa_[1], "caterpillar")

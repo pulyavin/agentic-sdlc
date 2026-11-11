@@ -1079,7 +1079,7 @@ def opener(st: Stage, accent: str):
     px_, py_ = ax - 80 * k - 20 * k, floor - 66 * k - 46 * k - 14 * k                      # the bulb's lower left
     connect(st, port(st, nzx, nzy, 1, 0, "funnel"), port(st, px_, py_, 0, 1, "apparatus"), "tube", 6,
             color=P.RED, depth=1000.5, lead=(56, 40))
-    caterp = st.actor("caterpillar", 770, 1092, "present", "worry", flip=True, tall=270, group="caterpillar")
+    caterp = st.actor("caterpillar", 770, 1092, "present", "worry", flip=False, tall=270, group="caterpillar")
     st.hold(caterp, handheld.clipboard)
     cat = st.actor("cat", 624, 1130, "present", "smile", flip=True, tall=300, group="cat")
     st.hold(cat, handheld.stopwatch)

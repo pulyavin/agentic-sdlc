@@ -111,6 +111,15 @@ def check(name: str, pose: str | None = None, mood: str | None = None) -> None:
         raise UnknownCharacter(f"unknown mood {mood!r}; available: {', '.join(MOODS)}")
 
 
+def shown(name: str, pose: str, held: tuple[str, ...]) -> tuple[str, dict[str, str]]:
+    """The pose a character is drawn in while holding things in the `held` hands, and which hand each thing ends up
+    in: a module may show a held thing another way (`HOLD_IN`: (pose, hand) -> (pose, hand))."""
+    for (was, side), (pose_, side_) in getattr(module(name), "HOLD_IN", {}).items():
+        if pose == was and side in held and side_ not in held:
+            return pose_, {h: side_ if h == side else h for h in held}
+    return pose, {h: h for h in held}
+
+
 def draw(name: str, pose: str | None = None, mood: str = "smile", hold: dict | None = None, **options) -> Canvas:
     """Draw a character on its own canvas (used when composing scenes).
 
@@ -126,6 +135,8 @@ def draw(name: str, pose: str | None = None, mood: str = "smile", hold: dict | N
     if not hasattr(mod, "hands"):
         raise UnknownCharacter(f"{resolve(name)} has no hands to hold things in")
     spec = {side: value if isinstance(value, tuple) else (value, 0.0) for side, value in hold.items()}
+    pose, moved = shown(name, pose, tuple(spec))
+    spec = {moved[side]: value for side, value in spec.items()}
     wrong = [side for side in spec if side not in ("left", "right")]
     if wrong:
         raise UnknownCharacter(f"a thing is held in the left or the right hand, not {wrong[0]!r}")

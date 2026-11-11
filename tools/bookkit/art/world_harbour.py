@@ -811,7 +811,8 @@ def in_hand(s: Strip, who, u: float, v: float) -> tuple[float, float]:
     a = math.radians(ang)
     k = (who.bottom - who.top) / 100
     ux, uy = math.cos(a), math.sin(a)
-    vx, vy = (math.sin(a), -math.cos(a)) if who.flip else (-math.sin(a), math.cos(a))   # a flipped hand is mirrored
+    mirrored = who.flip != s.thumb_flipped(who, "right")      # a flipped holder, or a left hand, is mirrored
+    vx, vy = (math.sin(a), -math.cos(a)) if mirrored else (-math.sin(a), math.cos(a))
     return gx + (u * ux + v * vx) * k, gy + (u * uy + v * vy) * k
 
 

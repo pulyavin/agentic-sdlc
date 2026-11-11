@@ -22,7 +22,7 @@ from collections.abc import Callable
 from dataclasses import dataclass, field
 
 from .. import design as P
-from .characters import module, resolve, span
+from .characters import module, resolve, shown, span
 from .ink import Canvas, n, settle_lettering
 from .scenes import PROFESSOR_HEIGHT
 from .scenes import actor as _actor
@@ -171,7 +171,10 @@ class Stage:
         the middle of the grip a held thing passes through (see `rig.HandFrame.grip`). The pose is the one the
         actor was stood in, unless given."""
         mod = module(box.name)
-        pose = pose or self.drawn[id(box)][1]["pose"]
+        if pose is None:     # the pose it is drawn in and the hand a thing is in, as the things it holds make them
+            how = self.drawn[id(box)][1]
+            pose, moved = shown(box.name, how["pose"], tuple(how["options"].get("hold", {})))
+            side = moved.get(side, side)
         if not hasattr(mod, "hands"):
             raise KeyError(f"{box.name} has no hands to hold things in")
         frame = mod.hands(pose)[side]
@@ -181,6 +184,13 @@ class Stage:
         dx = (gx - mod.CENTER_X) * k
         page_y = box.bottom - (mod.FEET_Y - gy) * k
         return (cx - dx, page_y, 180 - frame.rotation) if box.flip else (cx + dx, page_y, frame.rotation)
+
+    def thumb_flipped(self, box: Box, side: str = "right") -> bool:
+        """Whether the hand a thing is held in has its thumb on the other side (`rig.HandFrame.mirror`): the left
+        hands are drawn mirrored. The hand is the one the thing ends up in (`characters.shown`)."""
+        how = self.drawn[id(box)][1]
+        pose, moved = shown(box.name, how["pose"], tuple(how["options"].get("hold", {})))
+        return module(box.name).hands(pose)[moved.get(side, side)].mirror
 
     def hold(self, box: Box, make, side: str = "right", turn: float = 0.0) -> None:
         """Put a thing into a character's hand so the hand closes round it: the character is drawn again with that

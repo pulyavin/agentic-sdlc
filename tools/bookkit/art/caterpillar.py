@@ -42,6 +42,9 @@ POSES = {
     "stride": ("stride", ((66, 166), (52, 186), "relaxed", 8), ((146, 162), (164, 182), "relaxed", 0)),
     "knit": ("stand", ((52, 170), (76, 188), "grip", -30), ((158, 168), (136, 186), "grip", 30)),   # needles in
 }
+# A thing held in (pose, hand) is shown in (pose, hand) instead: in "present" and "think" her right arm leaves her
+# back, among the spikes, so a thing she holds goes into her left hand, out on her belly side ("show")
+HOLD_IN = {("present", "right"): ("show", "left"), ("think", "right"): ("show", "left")}
 CENTER_X = 104
 SPAN = {"stride": (-16, 186)}   # walking, her tail trails on the ground behind her, left of the usual box
 HEAD_TOP = 4

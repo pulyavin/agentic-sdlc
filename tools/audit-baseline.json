@@ -138,14 +138,6 @@
     },
     {
       "check": "word-gap",
-      "chapter": "8",
-      "where": "стоянно поддерживать в рабочем, актуальном, живом состоянии,",
-      "page": 168,
-      "detail": "a justified line with wide gaps between its words: mean 0.70 em, widest 0.71 em",
-      "reason": "A justified line that holds few words: a narrow column beside a note, or inline code, a no-break pair or a word the dictionary cannot hyphenate at its end. Hyphenation, the narrower word space and letter spacing at its invisible limit (paginate.js) leave it as wide as shown; only rewording the sentence closes it."
-    },
-    {
-      "check": "word-gap",
       "chapter": "10",
       "where": "Может случиться так, что агент просто не выполнит правило",
       "page": 197,

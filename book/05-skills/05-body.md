@@ -4,14 +4,14 @@
 
 Вот как мог бы выглядеть скилл, который заводит фича-флаг.
 
-```file title=".claude/skills/feature-flag/SKILL.md"
+```file title=".claude/skills/add-feature-flag/SKILL.md"
 ---
-name: feature-flag
+name: add-feature-flag
 description: Заводит новый фича-флаг — в коде,
   в конфигурации и в A/B-платформе. Применяй, когда
   просят «закрыть фичу флагом», «завести флаг»,
   «спрятать за тоггл». Не применяй для удаления
-  флагов — для этого скилл remove-flag.
+  флагов — для этого скилл remove-feature-flag.
 ---
 
 # Новый фича-флаг

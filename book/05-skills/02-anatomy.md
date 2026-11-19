@@ -5,7 +5,7 @@
 ```tree title="Скилл в репозитории"
 .claude/
 └── skills/
-    └── feature-flag/
+    └── add-feature-flag/
         ├── SKILL.md               # шапка и текст скилла
         ├── naming.md              # конвенция имён, по надобности
         └── scripts/

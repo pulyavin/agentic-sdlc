@@ -17,12 +17,12 @@
 ```file title=".claude/settings.local.json"
 {
   "skillOverrides": {
-    "feature-flag": "off"
+    "add-feature-flag": "off"
   }
 }
 ```
 
-С такой настройкой Claude Code не покажет скилл `feature-flag` ни агенту, ни тебе в меню команд, а когда закончишь сравнивать, просто удали эту настройку.
+С такой настройкой Claude Code не покажет скилл `add-feature-flag` ни агенту, ни тебе в меню команд, а когда закончишь сравнивать, просто удали эту настройку.
 
 ::: note caterpillar
 А если я удалю скилл, а он всё-таки был нужен?
